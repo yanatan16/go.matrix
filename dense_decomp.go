@@ -45,6 +45,29 @@ func (A *DenseMatrix) Cholesky() (L *DenseMatrix, err error) {
 }
 
 /*
+Returns the LDL cholesky decomposition C and D of A, st CDC'=A.
+*/
+func (A *DenseMatrix) LDL() (L *DenseMatrix, D *DenseMatrix, err error) {
+	L, err = A.Cholesky()
+	if err != nil {
+		return
+	}
+	n := L.Rows()
+	D = Zeros(n, n)
+
+	for i := 0; i < n; i++ {
+		x := L.Get(i, i)
+		L.Set(i, i, 1)
+		D.Set(i, i, math.Pow(x, 2))
+
+		for j := i + 1; j < n; j++ {
+			L.Set(j, i, L.Get(j, i) / x)
+		}
+	}
+	return
+}
+
+/*
 return L,U,P, st PLU=A.
 */
 func (A *DenseMatrix) LU() (L, U *DenseMatrix, P *PivotMatrix) {

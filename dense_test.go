@@ -365,6 +365,21 @@ func TestCholesky(t *testing.T) {
 	}
 }
 
+func TestLDL(t *testing.T) {
+	A := MakeDenseMatrix([]float64{1, 0.2, 0,
+		0.2, 1, 0.5,
+		0, 0.5, 1,
+	},
+		3, 3)
+	L, D, err := A.LDL()
+	if !(err == nil) {
+		t.Fail()
+	}
+	if !ApproxEquals(A, Product(Product(L, D), L.Transpose()), ε) {
+		t.Fail()
+	}
+}
+
 func TestLU(t *testing.T) {
 
 	A := MakeDenseMatrix([]float64{6, -2, -4, 4,
